@@ -1,5 +1,7 @@
 export interface UserTypes {
   id: string;
-  username: string;
+  name: string;
   email: string;
+  city: string;
+  address: { city: string; street: string; zipcode: string };
 }

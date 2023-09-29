@@ -7,6 +7,7 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
+  useEffect,
 } from "react";
 import axios from "axios";
 import { UserTypes } from "@/types/types";
@@ -16,23 +17,34 @@ interface Props {
 }
 
 interface ContextProviderProps {
-  users: UserTypes[] | null;
-  setUsers: Dispatch<SetStateAction<UserTypes[] | null>>;
+  users: UserTypes[];
+  setUsers: Dispatch<SetStateAction<UserTypes[]>>;
+  getUsers: () => void;
 }
-
-export const GlobalContext = createContext<ContextProviderProps | null>({
-  users: null,
-  setUsers: (): UserTypes[] => [],
+export const GlobalContext = createContext<ContextProviderProps>({
+  users: [],
+  setUsers: () => [],
+  getUsers: () => [],
 });
 
 export const GlobalContextProvider: FC<Props> = ({ children }) => {
-  const [users, setUsers] = useState<UserTypes[] | null>(null);
+  const api = "https://jsonplaceholder.typicode.com/users";
+  const [users, setUsers] = useState<UserTypes[]>([]);
+
+  const getUsers = async () => {
+    try {
+      const resp = await axios.get(api);
+      setUsers(resp.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
-    <GlobalContext.Provider value={{ users, setUsers }}>
+    <GlobalContext.Provider value={{ users, setUsers, getUsers }}>
       {children}
     </GlobalContext.Provider>
   );
 };
 
-const useGlobalContext = () => useContext(GlobalContext);
+export const useGlobalContext = () => useContext(GlobalContext);
