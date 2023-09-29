@@ -1,9 +1,12 @@
+"use client";
 import React, {
+  FC,
   createContext,
   useState,
   ReactNode,
   Dispatch,
   SetStateAction,
+  useContext,
 } from "react";
 import axios from "axios";
 import { UserTypes } from "@/types/types";
@@ -13,20 +16,23 @@ interface Props {
 }
 
 interface ContextProviderProps {
-  users: UserTypes | null;
-  setUsers: Dispatch<SetStateAction<UserTypes | null>>;
+  users: UserTypes[] | null;
+  setUsers: Dispatch<SetStateAction<UserTypes[] | null>>;
 }
 
-export const MainContext = createContext<ContextProviderProps | null>(null);
+export const GlobalContext = createContext<ContextProviderProps | null>({
+  users: null,
+  setUsers: (): UserTypes[] => [],
+});
 
-const ContextProvider: React.FC<Props> = ({ children }: Props) => {
-  const [users, setUsers] = useState<UserTypes | null>(null);
+export const GlobalContextProvider: FC<Props> = ({ children }) => {
+  const [users, setUsers] = useState<UserTypes[] | null>(null);
 
   return (
-    <MainContext.Provider value={{ users, setUsers }}>
+    <GlobalContext.Provider value={{ users, setUsers }}>
       {children}
-    </MainContext.Provider>
+    </GlobalContext.Provider>
   );
 };
 
-export default ContextProvider;
+const useGlobalContext = () => useContext(GlobalContext);
