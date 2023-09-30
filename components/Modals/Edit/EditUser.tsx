@@ -1,17 +1,9 @@
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import React, { Dispatch, FC, SetStateAction } from "react";
 import { toast } from "react-toastify";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -20,6 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserTypes } from "@/types/types";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 
 interface PropTyeps {
   isOpen: boolean;
@@ -46,11 +40,12 @@ const EditUser: FC<PropTyeps> = ({
   userId,
 }) => {
   const user = users?.find((user: UserTypes) => user.id === userId);
-  const [userDetails, setUserDetails] = useState({
-    name: "",
-    email: "",
-    city: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm();
 
   const handleClose = () => {
     setIsOpen(false);
@@ -59,26 +54,14 @@ const EditUser: FC<PropTyeps> = ({
     setIsOpen(true);
   };
 
-  useEffect(() => {
-    setUserDetails({
-      name: user?.name || "",
-      email: user?.email || "",
-      city: user?.address.city || "",
-    });
-  }, [userId]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserDetails({ ...userDetails, [e.target.id]: e.target.value });
-  };
-
-  const handleUpdateUser = () => {
+  const onSubmit = () => {
     const edited = users?.map((user: UserTypes) => {
       if (user.id === userId) {
         return {
           ...user,
-          name: userDetails.name,
-          email: userDetails.email,
-          address: { ...user.address, city: userDetails.city },
+          name: getValues("name"),
+          email: getValues("email"),
+          address: { ...user.address, city: getValues("city") },
         };
       }
       return user;
@@ -101,41 +84,64 @@ const EditUser: FC<PropTyeps> = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Edit User</AlertDialogTitle>
           </AlertDialogHeader>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              type="text"
-              id="name"
-              placeholder="Name"
-              value={userDetails.name}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              type="email"
-              id="email"
-              placeholder="Email"
-              value={userDetails.email}
-            />
-          </div>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="city">City</Label>
-            <Input
-              type="text"
-              id="city"
-              placeholder="City"
-              value={userDetails.city}
-              onChange={handleInputChange}
-            />
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleClose}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleUpdateUser}>
-              Update
-            </AlertDialogAction>
-          </AlertDialogFooter>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                {...register("name", {
+                  required: "Name is required!",
+                })}
+                className="mt-2"
+                type="text"
+                id="name"
+                placeholder="Name"
+                defaultValue={user?.name}
+              />
+              {errors.name && (
+                <p className="text-red-500">{`${errors.name.message}`}</p>
+              )}
+            </div>
+            <div className="mt-5 grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                {...register("email", {
+                  required: "Email is required!",
+                })}
+                className="mt-2"
+                type="email"
+                id="email"
+                placeholder="Email"
+                defaultValue={user?.email}
+              />
+              {errors.email && (
+                <p className="text-red-500">{`${errors.email.message}`}</p>
+              )}
+            </div>
+            <div className="mt-5 grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="city">City</Label>
+              <Input
+                {...register("city", {
+                  required: "City is required!",
+                })}
+                className="mt-2"
+                type="text"
+                id="city"
+                placeholder="City"
+                defaultValue={user?.address.city}
+              />
+              {errors.city && (
+                <p className="text-red-500">{`${errors.city.message}`}</p>
+              )}
+            </div>
+            <div className="mt-10">
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={handleClose}>
+                  Cancel
+                </AlertDialogCancel>
+                <Button type="submit">Update</Button>
+              </AlertDialogFooter>
+            </div>
+          </form>
         </AlertDialogContent>
       </AlertDialog>
     </div>
