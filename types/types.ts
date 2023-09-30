@@ -1,5 +1,5 @@
 export interface UserTypes {
-  id: string;
+  id: number;
   name: string;
   email: string;
   city: string;

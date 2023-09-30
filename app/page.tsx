@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -37,6 +38,8 @@ import {
 import { useEffect } from "react";
 import { useGlobalContext } from "@/context/appContext";
 import { UserTypes } from "@/types/types";
+import EditUser from "@/components/Modals/Edit/EditUser";
+import DeleteUser from "@/components/Modals/Delete/DeleteUser";
 
 export default function DataTableDemo() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -47,14 +50,12 @@ export default function DataTableDemo() {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const { users, setUsers, getUsers } = useGlobalContext();
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
+  const [userId, setUserId] = useState(0);
   useEffect(() => {
     getUsers();
   }, []);
-
-  const handleDeleteUser = (id: string) => {
-    const deleted = users.filter((user: UserTypes) => user.id !== id);
-    setUsers(deleted);
-  };
 
   const columns: ColumnDef<UserTypes | any>[] = [
     {
@@ -108,14 +109,20 @@ export default function DataTableDemo() {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => navigator.clipboard.writeText(user.id)}
+                onClick={() => {
+                  setIsOpenEdit(true);
+                  setUserId(user.id);
+                }}
               >
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => handleDeleteUser(user.id)}
+                onClick={() => {
+                  setIsOpenDelete(true);
+                  setUserId(user.id);
+                }}
               >
                 Delete
               </DropdownMenuItem>
@@ -276,6 +283,18 @@ export default function DataTableDemo() {
           >
             Next
           </Button>
+          <EditUser
+            isOpen={isOpenEdit}
+            setIsOpen={setIsOpenEdit}
+            userId={userId}
+          />
+          <DeleteUser
+            isOpen={isOpenDelete}
+            setIsOpen={setIsOpenDelete}
+            userId={userId}
+            users={users}
+            setUsers={setUsers}
+          />
         </div>
       </div>
     </div>
