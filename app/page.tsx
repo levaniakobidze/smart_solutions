@@ -42,6 +42,7 @@ import { useGlobalContext } from "@/context/appContext";
 import { UserTypes } from "@/types/types";
 import EditUser from "@/components/Modals/Edit/EditUser";
 import DeleteUser from "@/components/Modals/Delete/DeleteUser";
+import { useRouter } from "next/navigation";
 
 export default function DataTableDemo() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -55,7 +56,7 @@ export default function DataTableDemo() {
   const [isOpenEdit, setIsOpenEdit] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [userId, setUserId] = useState(0);
-  const notify = () => toast("Wow so easy!");
+  const router = useRouter();
 
   useEffect(() => {
     getUsers();
@@ -109,7 +110,10 @@ export default function DataTableDemo() {
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent
+              align="end"
+              onClick={(e) => e.stopPropagation()}
+            >
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 className="cursor-pointer"
@@ -157,7 +161,7 @@ export default function DataTableDemo() {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full p-10">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter names..."
@@ -230,6 +234,9 @@ export default function DataTableDemo() {
                   className="cursor-pointer"
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => {
+                    router.push(`/details/${row.original.id}`);
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

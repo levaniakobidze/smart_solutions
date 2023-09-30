@@ -35,6 +35,7 @@ export const GlobalContextProvider: FC<Props> = ({ children }) => {
     try {
       const resp = await axios.get(api);
       setUsers(resp.data);
+      console.log(resp.data.length, "length");
     } catch (err) {
       console.log(err);
     }
