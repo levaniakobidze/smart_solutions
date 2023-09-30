@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -53,6 +55,8 @@ export default function DataTableDemo() {
   const [isOpenEdit, setIsOpenEdit] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [userId, setUserId] = useState(0);
+  const notify = () => toast("Wow so easy!");
+
   useEffect(() => {
     getUsers();
   }, []);
@@ -156,13 +160,22 @@ export default function DataTableDemo() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
+          placeholder="Filter names..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <Input
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm md:ml-5"
         />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -295,6 +308,7 @@ export default function DataTableDemo() {
             users={users}
             setUsers={setUsers}
           />
+          <ToastContainer />
         </div>
       </div>
     </div>

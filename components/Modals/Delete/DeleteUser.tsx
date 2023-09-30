@@ -10,8 +10,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { UserTypes } from "@/types/types";
+import { toast } from "react-toastify";
 
 interface PropTyeps {
   isOpen: boolean;
@@ -21,6 +21,16 @@ interface PropTyeps {
   setUsers: Dispatch<SetStateAction<UserTypes[]>>;
 }
 
+let toastObj = {
+  position: toast.POSITION.TOP_RIGHT,
+  autoClose: 2000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+};
+
 const DeleteUser: FC<PropTyeps> = ({
   isOpen,
   setIsOpen,
@@ -28,6 +38,7 @@ const DeleteUser: FC<PropTyeps> = ({
   setUsers,
   userId,
 }) => {
+  const user = users?.find((user: UserTypes) => user.id === userId);
   const handleClose = () => {
     setIsOpen(false);
   };
@@ -38,6 +49,9 @@ const DeleteUser: FC<PropTyeps> = ({
     const deleted = users.filter((user: UserTypes) => user.id !== userId);
     setUsers(deleted);
     handleClose();
+    toast.error(`${user?.name} successfully deleted!`, {
+      ...toastObj,
+    });
   };
 
   return (
@@ -54,7 +68,7 @@ const DeleteUser: FC<PropTyeps> = ({
             </AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete your
-              user data.
+              user data. user: {user?.name}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
