@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { UserTypes } from "@/types/types";
 import { toast } from "react-toastify";
-
 interface PropTyeps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;

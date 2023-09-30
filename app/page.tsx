@@ -300,6 +300,8 @@ export default function DataTableDemo() {
             isOpen={isOpenEdit}
             setIsOpen={setIsOpenEdit}
             userId={userId}
+            users={users}
+            setUsers={setUsers}
           />
           <DeleteUser
             isOpen={isOpenDelete}
