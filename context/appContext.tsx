@@ -7,7 +7,6 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
-  useEffect,
 } from "react";
 import axios from "axios";
 import { UserTypes } from "@/types/types";
