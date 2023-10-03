@@ -54,6 +54,7 @@ const EditUser: FC<PropTyeps> = ({
     setIsOpen(true);
   };
 
+  // Function to submit editted user form
   const onSubmit = () => {
     const edited = users?.map((user: UserTypes) => {
       if (user.id === userId) {
